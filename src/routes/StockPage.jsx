@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { ThemeContext } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const popularSymbols = [
   { exchange: "NASDAQ", symbol: "AAPL" },
@@ -11,6 +12,7 @@ const popularSymbols = [
 
 const StockPage = () => {
   const { theme } = useContext(ThemeContext);
+  const { t, language } = useLanguage();
   const [exchange, setExchange] = useState("NASDAQ");
   const [symbol, setSymbol] = useState("AAPL");
   const [chartSymbol, setChartSymbol] = useState("NASDAQ:AAPL");
@@ -28,14 +30,14 @@ const StockPage = () => {
     timezone: "Etc/UTC",
     withdateranges: "1",
     hideideas: "1",
-    locale: "en",
+    locale: language === "kn" ? "in" : "en",
   }).toString();
 
   const showStock = (requestedSymbol, requestedExchange = exchange) => {
     const normalizedSymbol = requestedSymbol.trim().toUpperCase();
 
     if (!/^[A-Z0-9.-]{1,15}$/.test(normalizedSymbol)) {
-      setError("Enter a valid stock ticker, such as AAPL or BRK.B.");
+      setError(t("invalidStockSymbol"));
       return;
     }
 
@@ -47,9 +49,9 @@ const StockPage = () => {
 
   return (
     <main className="rounded-div my-12 py-8">
-      <h1 className="text-3xl font-bold">Stock Market</h1>
+      <h1 className="text-3xl font-bold">{t("stockMarket")}</h1>
       <p className="mt-2 text-secondary">
-        Search a stock symbol to view its interactive market chart.
+        {t("stockChartIntro")}
       </p>
 
       <form
@@ -60,7 +62,7 @@ const StockPage = () => {
         }}
       >
         <label className="sr-only" htmlFor="stock-exchange">
-          Stock exchange
+          {t("selectExchange")}
         </label>
         <select
           id="stock-exchange"
@@ -73,7 +75,7 @@ const StockPage = () => {
           <option value="AMEX">AMEX</option>
         </select>
         <label className="sr-only" htmlFor="stock-symbol">
-          Stock symbol
+          {t("stockSymbol")}
         </label>
         <input
           id="stock-symbol"
@@ -81,19 +83,19 @@ const StockPage = () => {
           autoComplete="off"
           maxLength={15}
           onChange={(event) => setSymbol(event.target.value.toUpperCase())}
-          placeholder="Enter a symbol, e.g. AAPL"
+          placeholder={t("enterStockSymbol")}
           value={symbol}
         />
         <button
           className="rounded-2xl bg-button px-5 py-3 font-bold text-btnText"
           type="submit"
         >
-          View chart
+          {t("viewChart")}
         </button>
       </form>
 
       <div className="mb-6">
-        <p className="mb-3 font-semibold">Popular stocks</p>
+        <p className="mb-3 font-semibold">{t("popularStocks")}</p>
         <div className="flex flex-wrap gap-2">
           {popularSymbols.map((stock) => (
             <button
@@ -114,11 +116,11 @@ const StockPage = () => {
         </p>
       )}
 
-      <section aria-label={`${chartSymbol} stock chart`}>
+      <section aria-label={t("chartTitle", { symbol: chartSymbol })}>
         <h2 className="mb-3 text-xl font-bold">{chartSymbol}</h2>
         <iframe
           key={chartSymbol + theme}
-          title={`${chartSymbol} interactive stock chart`}
+          title={t("chartTitle", { symbol: chartSymbol })}
           src={chartUrl.toString()}
           className="h-[500px] w-full rounded-xl border-0"
           loading="lazy"
@@ -128,7 +130,7 @@ const StockPage = () => {
       </section>
 
       <p className="mt-4 text-sm text-secondary">
-        Charts are provided by{" "}
+        {t("chartAttribution")}{" "}
         <a
           className="text-accent underline"
           href={`https://www.tradingview.com/symbols/${encodeURIComponent(
@@ -139,7 +141,7 @@ const StockPage = () => {
         >
           TradingView
         </a>
-        . Market data availability and delay depend on the exchange.
+        . {t("marketDelayNote")}
       </p>
     </main>
   );

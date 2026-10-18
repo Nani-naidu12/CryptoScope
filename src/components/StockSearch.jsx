@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { HiChevronDown, HiChevronUp } from "react-icons/hi";
+import { useLanguage } from "../context/LanguageContext";
 
 const scannerUrl = "https://scanner.tradingview.com/america/scan";
 const columns = [
@@ -22,24 +23,25 @@ const getSortValue = (stock, key) => {
   return Number.isFinite(stock[key]) ? stock[key] : null;
 };
 
-const formatCurrency = (value, currency = "USD") =>
+const formatCurrency = (value, currency = "USD", locale = "en-US") =>
   Number.isFinite(value)
-    ? value.toLocaleString("en-US", {
+    ? value.toLocaleString(locale, {
         style: "currency",
         currency,
         maximumFractionDigits: value < 1 ? 6 : 2,
       })
     : "—";
 
-const formatCompactNumber = (value) =>
+const formatCompactNumber = (value, locale = "en-US") =>
   Number.isFinite(value)
-    ? value.toLocaleString("en-US", {
+    ? value.toLocaleString(locale, {
         notation: "compact",
         maximumFractionDigits: 2,
       })
     : "—";
 
 const StockSearch = () => {
+  const { t, language } = useLanguage();
   const [stocks, setStocks] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [sort, setSort] = useState({ key: "marketCap", direction: "desc" });
@@ -116,7 +118,7 @@ const StockSearch = () => {
 
         console.error("Failed to load stock market data:", requestError);
         setError(
-          "Unable to load stock data right now. Please try again in a moment."
+          t("stockDataError")
         );
       } finally {
         if (!controller.signal.aborted) {
@@ -127,7 +129,7 @@ const StockSearch = () => {
 
     fetchStocks();
     return () => controller.abort();
-  }, [retry]);
+  }, [retry, t]);
 
   const visibleStocks = useMemo(
     () =>
@@ -161,9 +163,10 @@ const StockSearch = () => {
     [searchInput, sort, stocks]
   );
 
-  const renderSortHeader = (label, key, defaultDirection = "desc") => {
+  const renderSortHeader = (labelKey, key, defaultDirection = "desc") => {
     const isActive = sort.key === key;
     const direction = isActive ? sort.direction : defaultDirection;
+    const label = t(labelKey);
 
     return (
       <th
@@ -203,19 +206,19 @@ const StockSearch = () => {
     <section className="rounded-div my-4 py-4">
       <div className="flex flex-col justify-between gap-3 px-4 pb-4 sm:flex-row sm:items-end">
         <div>
-          <h2 className="text-2xl font-bold">Search Stocks</h2>
+          <h2 className="text-2xl font-bold">{t("searchStocks")}</h2>
           <p className="mt-1 text-sm text-secondary">
-            Search the 100 largest US-listed stocks by ticker or company name.
+            {t("stocksSearchDescription")}
           </p>
         </div>
         <label className="sr-only" htmlFor="stock-search">
-          Search stocks
+          {t("searchStocksLabel")}
         </label>
         <input
           id="stock-search"
           className="w-full rounded-2xl border border-input bg-primary px-4 py-2 sm:max-w-xs"
           onChange={(event) => setSearchInput(event.target.value)}
-          placeholder="Search ticker or company"
+          placeholder={t("searchTickerOrCompany")}
           type="search"
           value={searchInput}
         />
@@ -223,7 +226,7 @@ const StockSearch = () => {
 
       {loading && (
         <p className="px-4 py-6 text-secondary" role="status">
-          Loading stock market data…
+          {t("loadingStockData")}
         </p>
       )}
 
@@ -235,7 +238,7 @@ const StockSearch = () => {
             onClick={() => setRetry((count) => count + 1)}
             type="button"
           >
-            Retry
+            {t("retry")}
           </button>
         </div>
       )}
@@ -245,12 +248,12 @@ const StockSearch = () => {
           <table className="w-full border-collapse text-left">
             <thead>
               <tr className="border-b">
-                {renderSortHeader("Symbol", "symbol", "asc")}
-                {renderSortHeader("Company", "company", "asc")}
-                {renderSortHeader("Price", "price")}
-                {renderSortHeader("Change", "change")}
-                {renderSortHeader("Volume", "volume")}
-                {renderSortHeader("Market Cap", "marketCap")}
+                {renderSortHeader("symbol", "symbol", "asc")}
+                {renderSortHeader("company", "company", "asc")}
+                {renderSortHeader("price", "price")}
+                {renderSortHeader("change", "change")}
+                {renderSortHeader("volume", "volume")}
+                {renderSortHeader("marketCap", "marketCap")}
               </tr>
             </thead>
             <tbody>
@@ -270,7 +273,11 @@ const StockSearch = () => {
                   </td>
                   <td className="min-w-48 px-3 py-2">{stock.company}</td>
                   <td className="whitespace-nowrap px-3 py-2">
-                    {formatCurrency(stock.price, stock.currency)}
+                    {formatCurrency(
+                      stock.price,
+                      stock.currency,
+                      language === "kn" ? "kn-IN" : "en-US"
+                    )}
                   </td>
                   <td
                     className={`whitespace-nowrap px-3 py-2 font-semibold ${
@@ -286,17 +293,24 @@ const StockSearch = () => {
                       : "—"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2">
-                    {formatCompactNumber(stock.volume)}
+                    {formatCompactNumber(
+                      stock.volume,
+                      language === "kn" ? "kn-IN" : "en-US"
+                    )}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2">
-                    {formatCurrency(stock.marketCap, stock.currency)}
+                    {formatCurrency(
+                      stock.marketCap,
+                      stock.currency,
+                      language === "kn" ? "kn-IN" : "en-US"
+                    )}
                   </td>
                 </tr>
               ))}
               {visibleStocks.length === 0 && (
                 <tr>
                   <td className="px-3 py-8 text-center text-secondary" colSpan="6">
-                    No stocks match your search.
+                    {t("noStocksMatch")}
                   </td>
                 </tr>
               )}
@@ -306,7 +320,7 @@ const StockSearch = () => {
       )}
 
       <p className="px-4 pt-3 text-xs text-secondary">
-        Market data provided by TradingView; quotes may be delayed.
+        {t("stockDataCredit")}
       </p>
     </section>
   );

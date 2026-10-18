@@ -2,23 +2,27 @@ import React, { useContext } from "react";
 import { HiSun, HiMoon } from "react-icons/hi";
 import { MdPalette } from "react-icons/md";
 import { ThemeContext } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const palettes = [
-  { name: "slate", label: "Slate", color: "#64748b" },
-  { name: "ocean", label: "Ocean", color: "#3b82f6" },
-  { name: "forest", label: "Forest", color: "#22a35a" },
-  { name: "lavender", label: "Lavender", color: "#8b5cf6" },
+  { name: "slate", label: "paletteSlate", color: "#64748b" },
+  { name: "ocean", label: "paletteOcean", color: "#3b82f6" },
+  { name: "forest", label: "paletteForest", color: "#22a35a" },
+  { name: "lavender", label: "paletteLavender", color: "#8b5cf6" },
 ];
 
 const ThemeToggle = () => {
   const { theme, setTheme, palette, setPalette } = useContext(ThemeContext);
+  const { t } = useLanguage();
 
   return (
     <div className="flex items-center gap-2 p-2">
       <button
         type="button"
         className="text-primary text-2xl"
-        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+        aria-label={t("switchToTheme", {
+          theme: t(theme === "dark" ? "light" : "dark"),
+        })}
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       >
         {theme === "dark" ? <HiSun /> : <HiMoon />}
@@ -27,8 +31,8 @@ const ThemeToggle = () => {
         <details className="group">
           <summary
             className="list-none cursor-pointer text-primary text-2xl"
-            aria-label="Choose background color palette"
-            title="Choose background color"
+            aria-label={t("choosePalette")}
+            title={t("chooseBackgroundColor")}
           >
             <MdPalette />
           </summary>
@@ -37,9 +41,9 @@ const ThemeToggle = () => {
               <button
                 key={option.name}
                 type="button"
-                aria-label={`${option.label} color palette`}
+                aria-label={`${t(option.label)} ${t("choosePalette")}`}
                 aria-pressed={palette === option.name}
-                title={option.label}
+                title={t(option.label)}
                 onClick={(event) => {
                   setPalette(option.name);
                   event.currentTarget.closest("details").open = false;

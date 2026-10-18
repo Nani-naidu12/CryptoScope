@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AiOutlineMail, AiFillLock } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const { signUp } = UserAuth();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,13 +30,13 @@ const SignUp = () => {
   return (
     <div>
       <div className="max-w-[400px] mx-auto min-h-[600px] px-4 py-20">
-        <h1 className="text-2xl font-bold">Sign Up</h1>
+        <h1 className="text-2xl font-bold">{t("signUp")}</h1>
 
         {error ? <p className="bg-red-300 p-3 my-2">{error}</p> : null}
 
         <form onSubmit={handleSubmit}>
           <div className="my-4">
-            <label>Email</label>
+            <label>{t("email")}</label>
             <div className="relative my-2 w-full rounded-2xl shadow-2xl">
               <input
                 onChange={(e) => setEmail(e.target.value)}
@@ -46,7 +48,7 @@ const SignUp = () => {
           </div>
 
           <div className="my-4">
-            <label>Password</label>
+            <label>{t("password")}</label>
             <div className="relative my-2 w-full rounded-2xl shadow-2xl">
               <input
                 onChange={(e) => setPassword(e.target.value)}
@@ -57,13 +59,13 @@ const SignUp = () => {
             </div>
           </div>
           <button className="w-full bg-button text-btnText my-2 p-3 rounded-2xl shadow-lg hover:shadow-2xl">
-            Sign Up
+            {t("signUp")}
           </button>
         </form>
         <p className="my-4">
-          Already have an account?{" "}
+          {t("alreadyHaveAccount")}{" "}
           <Link className="text-accent" to="/signup">
-            Sign In
+            {t("signIn")}
           </Link>
         </p>
       </div>

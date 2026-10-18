@@ -11,6 +11,7 @@ import CoinPage from "./routes/CoinPage";
 import StockPage from "./routes/StockPage";
 import Footer from "./components/Footer";
 import { AuthContextProvider } from "./context/AuthContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 function App() {
   // fetching coins from coingecko api
@@ -27,22 +28,24 @@ function App() {
   }, [url]);
 
   return (
-    <ThemeProvider> 
-      <AuthContextProvider>
-        <Navbar />
-        <Routes>
-          {/* coins passed down to home coomponent */}
-          <Route path="/" element={<Home coins={coins} />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/stocks" element={<StockPage />} />
-          <Route path="/coin/:coinId" element={<CoinPage />}>
-            <Route path=":coinId" />
-          </Route>
-        </Routes>
-        <Footer />
-      </AuthContextProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <AuthContextProvider>
+          <Navbar />
+          <Routes>
+            {/* coins passed down to home component */}
+            <Route path="/" element={<Home coins={coins} />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/stocks" element={<StockPage />} />
+            <Route path="/coin/:coinId" element={<CoinPage />}>
+              <Route path=":coinId" />
+            </Route>
+          </Routes>
+          <Footer />
+        </AuthContextProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

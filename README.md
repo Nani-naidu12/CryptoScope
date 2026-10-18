@@ -17,6 +17,13 @@ configuration. Select a ticker to view it on TradingView. The Stocks page also
 provides an interactive chart where you can search by ticker and choose an
 exchange. Market data availability and delay depend on the exchange.
 
+## Language support
+
+Choose English, Kannada, Hindi, or Telugu from the language selector in the
+navigation bar. The selection is saved in the browser and remains active across
+pages and reloads. Third-party market data and embedded chart labels may not be
+translated.
+
 ### Technology Used
 
 - React

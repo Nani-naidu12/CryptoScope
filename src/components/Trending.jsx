@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useLanguage } from "../context/LanguageContext";
 
 const Trending = () => {
+  const { t } = useLanguage();
   const [trendingCoins, setTrendingCoins] = useState([]);
 
   const url = "https://api.coingecko.com/api/v3/search/trending";
@@ -15,7 +17,7 @@ const Trending = () => {
 
   return (
     <div className="rounded-div my-12 py-8 text-primary">
-      <h1 className="text-2xl font-bold py-4">Trending Coins</h1>
+      <h1 className="text-2xl font-bold py-4">{t("trendingCoins")}</h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {trendingCoins.map((coin, idx) => (
           <div
