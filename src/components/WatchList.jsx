@@ -4,10 +4,12 @@ import { AiOutlineClose } from "react-icons/ai";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { UserAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const WatchList = () => {
   const [addCoins, setAddCoins] = useState([]);
   const { user } = UserAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     onSnapshot(doc(db, "users", `${user?.email}`), (doc) => {
@@ -32,16 +34,15 @@ const WatchList = () => {
     <div>
       {addCoins?.length === 0 ? (
         <p>
-          You don't have any coins saved. Please save a coin to add it to your
-          watch list. <Link to="/">Click here to search coins.</Link>
+          {t("noSavedCoins")} <Link to="/">{t("clickHereSearch")}</Link>
         </p>
       ) : (
         <table className="w-full border-collapse text-center">
           <thead>
             <tr className="border-b">
-              <th className="px-4">Rank #</th>
-              <th className="text-left">Coin</th>
-              <th className="text-left">Remove</th>
+              <th className="px-4">{t("marketRank")}</th>
+              <th className="text-left">{t("coin")}</th>
+              <th className="text-left">{t("remove")}</th>
             </tr>
           </thead>
           <tbody>
