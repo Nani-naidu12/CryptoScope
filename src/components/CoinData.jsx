@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { useLanguage } from "../context/LanguageContext";
 
 const CoinData = ({ coin }) => {
   const [savedCoin, setSavedCoin] = useState(false);
   const { user } = UserAuth();
+  const { t } = useLanguage();
 
   const coinPath = doc(db, "users", `${user?.email}`);
 
@@ -25,7 +27,7 @@ const CoinData = ({ coin }) => {
         }),
       });
     } else {
-      alert("Please sign in to save a coin to your watchlist.");
+      alert(t("coinSavedSignIn"));
     }
   };
 
