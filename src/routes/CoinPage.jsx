@@ -4,12 +4,14 @@ import { Sparklines, SparklinesLine } from "react-sparklines";
 import { FaTwitter, FaFacebook, FaReddit, FaGithub } from "react-icons/fa";
 import DOMPurify from "dompurify";
 import { useParams } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 
 const CoinPage = () => {
   const [coin, setCoin] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const params = useParams();
+  const { t } = useLanguage();
 
   const url = `https://api.coingecko.com/api/v3/coins/${params.coinId}?localization=false&sparkline=true`;
 
@@ -49,17 +51,21 @@ const CoinPage = () => {
     Number.isFinite(value) ? `${value.toFixed(2)}%` : "—";
 
   if (loading) {
-    return <div className="rounded-div my-12 py-8">Loading coin details…</div>;
+    return <div className="rounded-div my-12 py-8">{t("loadingCoin")}</div>;
   }
 
   if (error) {
-    return <div className="rounded-div my-12 py-8">{error}</div>;
+    return (
+      <div className="rounded-div my-12 py-8">
+        {t("coinLoadError")}
+      </div>
+    );
   }
 
   if (!coin) {
     return (
       <div className="rounded-div my-12 py-8">
-        Coin details are unavailable.
+        {t("coinUnavailable")}
       </div>
     );
   }
@@ -69,7 +75,9 @@ const CoinPage = () => {
       <div className="flex py-8">
         <img className="w-20 mr-8" src={coin.image?.large} alt="/" />
         <div>
-          <p className="font-bold text-3xl mt-2">{coin?.name} price</p>
+          <p className="font-bold text-3xl mt-2">
+            {t("coinPrice", { name: coin?.name })}
+          </p>
           <p>({coin.symbol?.toUpperCase()} / USD)</p>
         </div>
       </div>
@@ -83,7 +91,7 @@ const CoinPage = () => {
                 {formatCurrency(coin.market_data.current_price.usd)}
               </p>
             ) : null}
-            <p>7 Days</p>
+            <p>{t("sevenDays")}</p>
           </div>
 
           <div>
@@ -94,13 +102,13 @@ const CoinPage = () => {
 
           <div className="flex justify-between py-4">
             <div>
-              <p className="text-gray-500 text-sm">Market Cap</p>
+              <p className="text-gray-500 text-sm">{t("marketCapLabel")}</p>
               {coin.market_data?.market_cap ? (
                 <p>{formatCurrency(coin.market_data.market_cap.usd)}</p>
               ) : null}
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Volume(24h)</p>
+              <p className="text-gray-500 text-sm">{t("volume24hLabel")}</p>
               {coin.market_data?.total_volume ? (
                 <p>{formatCurrency(coin.market_data.total_volume.usd)}</p>
               ) : null}
@@ -110,13 +118,13 @@ const CoinPage = () => {
           {/* 24h high-low */}
           <div className="flex justify-between py-4">
             <div>
-              <p className="text-gray-500 text-sm">24h High</p>
+              <p className="text-gray-500 text-sm">{t("high24h")}</p>
               {coin.market_data?.high_24h ? (
                 <p>{formatCurrency(coin.market_data.high_24h.usd)}</p>
               ) : null}
             </div>
             <div>
-              <p className="text-gray-500 text-sm">24h Low</p>
+              <p className="text-gray-500 text-sm">{t("low24h")}</p>
               {coin.market_data?.low_24h ? (
                 <p>{formatCurrency(coin.market_data.low_24h.usd)}</p>
               ) : null}
@@ -126,18 +134,18 @@ const CoinPage = () => {
 
         {/* Market Stats */}
         <div>
-          <p className="text-xl font-bold">Market Stats</p>
+          <p className="text-xl font-bold">{t("marketStats")}</p>
           <div className="flex justify-between py-4">
             <div>
-              <p className="text-gray-500 text-sm">Market Rank</p>
+              <p className="text-gray-500 text-sm">{t("marketRank")}</p>
               {coin.market_cap_rank ?? "—"}
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Hashing Algorithm</p>
+              <p className="text-gray-500 text-sm">{t("hashingAlgorithm")}</p>
               {coin.hashing_algorithm ? <p>{coin.hashing_algorithm}</p> : null}
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Trust Score</p>
+              <p className="text-gray-500 text-sm">{t("trustScore")}</p>
               {Number.isFinite(coin.liquidity_score) ? (
                 <p>{coin.liquidity_score.toFixed(2)}</p>
               ) : (
@@ -148,7 +156,7 @@ const CoinPage = () => {
 
           <div className="flex justify-between py-4">
             <div>
-              <p className="text-gray-500 text-sm">Price Change (24h)</p>
+              <p className="text-gray-500 text-sm">{t("priceChange24h")}</p>
               {coin.market_data ? (
                 <p>
                   {formatPercentage(
@@ -158,7 +166,7 @@ const CoinPage = () => {
               ) : null}
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Price Change (7d)</p>
+              <p className="text-gray-500 text-sm">{t("priceChange7d")}</p>
               {coin.market_data ? (
                 <p>
                   {formatPercentage(
@@ -168,7 +176,7 @@ const CoinPage = () => {
               ) : null}
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Price Change (14d)</p>
+              <p className="text-gray-500 text-sm">{t("priceChange14d")}</p>
               {coin.market_data ? (
                 <p>
                   {formatPercentage(
@@ -181,7 +189,7 @@ const CoinPage = () => {
 
           <div className="flex justify-between py-4">
             <div>
-              <p className="text-gray-500 text-sm">Price Change (30d)</p>
+              <p className="text-gray-500 text-sm">{t("priceChange30d")}</p>
               {coin.market_data ? (
                 <p>
                   {formatPercentage(
@@ -191,7 +199,7 @@ const CoinPage = () => {
               ) : null}
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Price Change (60d)</p>
+              <p className="text-gray-500 text-sm">{t("priceChange60d")}</p>
               {coin.market_data ? (
                 <p>
                   {formatPercentage(
@@ -201,7 +209,7 @@ const CoinPage = () => {
               ) : null}
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Price Change (1y)</p>
+              <p className="text-gray-500 text-sm">{t("priceChange1y")}</p>
               {coin.market_data ? (
                 <p>
                   {formatPercentage(
@@ -223,7 +231,7 @@ const CoinPage = () => {
 
       {/* Description */}
       <div className="py-4">
-        <p className="font-bold text-xl">About {coin.name}</p>
+        <p className="font-bold text-xl">{t("aboutCoin", { name: coin.name })}</p>
         <p
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(
